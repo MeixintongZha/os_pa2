@@ -1,1 +1,0 @@
-cmd_/home/james/os_pa2/open/intercept_open.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/james/os_pa2/open/intercept_open.ko /home/james/os_pa2/open/intercept_open.o /home/james/os_pa2/open/intercept_open.mod.o ;  true

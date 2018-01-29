@@ -1,4 +1,4 @@
-obj-m := intercept_ex.o
+obj-m := proj2.o
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
@@ -7,3 +7,4 @@ all:
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
+

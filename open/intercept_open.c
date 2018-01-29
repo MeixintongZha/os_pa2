@@ -4,10 +4,16 @@
 
 unsigned long **sys_call_table;
 
-asmlinkage long (*ref_sys_cs3013_syscall1)(void);
+asmlinkage long (*ref_sys_open)(const char *pathname, int flags, umode_t mode);
 
-asmlinkage long new_sys_cs3013_syscall1(void) {
-  printk(KERN_INFO "\"'Hello world?!' More like 'Goodbye, world!' EXTERMINATE!\" -- Dalek");
+asmlinkage long new_sys_open(const char *pathname, int flags, umode_t mode) {
+
+  if(current_uid().val >= 1000) {
+    printk(KERN_INFO "Intercepted Open");
+  }
+
+  (*ref_sys_open)(pathname, flags, mode);
+  
   return 0;
 }
 
@@ -65,12 +71,12 @@ static int __init interceptor_start(void) {
   }
   
   /* Store a copy of all the existing functions */
-  ref_sys_cs3013_syscall1 = (void *)sys_call_table[__NR_cs3013_syscall1];
+  ref_sys_open = (void *)sys_call_table[__NR_open];
 
   /* Replace the existing system calls */
   disable_page_protection();
 
-  sys_call_table[__NR_cs3013_syscall1] = (unsigned long *)new_sys_cs3013_syscall1;
+  sys_call_table[__NR_open] = (unsigned long *)new_sys_open;
   
   enable_page_protection();
   
@@ -87,7 +93,7 @@ static void __exit interceptor_end(void) {
   
   /* Revert all system calls to what they were before we began. */
   disable_page_protection();
-  sys_call_table[__NR_cs3013_syscall1] = (unsigned long *)ref_sys_cs3013_syscall1;
+  sys_call_table[__NR_open] = (unsigned long *)ref_sys_open;
   enable_page_protection();
 
   printk(KERN_INFO "Unloaded interceptor!");
